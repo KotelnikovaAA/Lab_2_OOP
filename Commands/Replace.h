@@ -10,6 +10,9 @@
 
 namespace Commands {
 
+    static const unsigned int FIRST_REPLACE_ARGS_INDEX = 0;
+    static const unsigned int SECOND_REPLACE_ARGS_INDEX = 1;
+
     class Replace : public WorkFlowFactory::ICommand {
         void execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) override;
 

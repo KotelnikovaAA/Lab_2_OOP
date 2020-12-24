@@ -20,14 +20,14 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
     }
     std::string currentInputLine;
     std::getline(sourceFile, currentInputLine);
-    ::WorkFlow::WorkFlowValidator::checkStringIsInitialBorder(currentInputLine);
+    WorkFlow::WorkFlowValidator::checkStringIsInitialBorder(currentInputLine);
 
     while (std::getline(sourceFile, currentInputLine)) {
         if (sourceFile.eof()) {
             throw std::runtime_error("RunParser error: The source file doesn't include finite border.");
         }
 
-        if (::WorkFlow::WorkFlowValidator::checkStringIsFiniteBorder(currentInputLine)) {
+        if (WorkFlow::WorkFlowValidator::checkStringIsFiniteBorder(currentInputLine)) {
             break;
         }
 
@@ -35,7 +35,7 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
         tryReadCurrentString(strIStream, currentInputLine);
         auto commandId = ::WorkFlow::WorkFlowValidator::checkValueIsNumber(currentInputLine);
         tryReadCurrentString(strIStream, currentInputLine);
-        ::WorkFlow::WorkFlowValidator::checkStringIsEqually(currentInputLine);
+        WorkFlow::WorkFlowValidator::checkStringIsEqually(currentInputLine);
         tryReadCurrentString(strIStream, currentInputLine);
         auto countCommandArgs = ::WorkFlow::WorkFlowValidator::checkCommandName(currentInputLine);
         commandNamesByIdMap[commandId] = currentInputLine;
@@ -43,7 +43,7 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
         if (countCommandArgs == 0) {
             argumentsByIdMap[commandId].clear();
         } else {
-            for (int counter = 0; counter < countCommandArgs; counter++) {
+            for (size_t counter = 0; counter < countCommandArgs; counter++) {
                 tryReadCurrentString(strIStream, currentInputLine);
                 argumentsByIdMap[commandId].push_back(currentInputLine);
             }
@@ -64,7 +64,7 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
     std::istringstream strIStream(currentInputLine);
     while (!strIStream.eof()) {
         strIStream >> currentInputLine;
-        auto commandId = ::WorkFlow::WorkFlowValidator::checkValueIsNumber(currentInputLine);
+        auto commandId = WorkFlow::WorkFlowValidator::checkValueIsNumber(currentInputLine);
         if (argumentsByIdMap.count(commandId) == 0) {
             throw std::runtime_error(
                     "RunParser error: The command order from source file contains invalid data. Please, check it and try again.");
@@ -74,7 +74,7 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
             break;
         }
         strIStream >> currentInputLine;
-        ::WorkFlow::WorkFlowValidator::checkStringIsArrow(currentInputLine);
+        WorkFlow::WorkFlowValidator::checkStringIsArrow(currentInputLine);
 
         if (strIStream.eof()) {
             throw std::runtime_error(
@@ -84,11 +84,7 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
 
     unsigned int inFileId;
     if (isConsoleInputStream) {
-        for (inFileId = 0; inFileId < UINT_MAX; inFileId++) {
-            if (std::find(commandOrder.begin(), commandOrder.end(), inFileId) == commandOrder.end()) {
-                break;
-            }
-        }
+        inFileId = findNextPositiveFreeCommandIndex(0);
         commandOrder.insert(commandOrder.begin(), inFileId);
         commandNamesByIdMap[inFileId] = "readfile";
         argumentsByIdMap[inFileId].push_back(inputFileName);
@@ -96,24 +92,22 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
 
     unsigned int outFileId;
     if (isConsoleOutputStream) {
-        for (outFileId = inFileId + 1; outFileId < UINT_MAX; outFileId++) {
-            if (std::find(commandOrder.begin(), commandOrder.end(), outFileId) == commandOrder.end()) {
-                break;
-            }
-        }
+        outFileId = findNextPositiveFreeCommandIndex(inFileId + 1);
         commandOrder.insert(commandOrder.end(), outFileId);
         commandNamesByIdMap[outFileId] = "writefile";
         argumentsByIdMap[outFileId].push_back(outputFileName);
     }
 
     for (const auto &item : commandOrder) {
-        if (item == commandOrder.front()) {
-            if (commandNamesByIdMap.at(commandOrder.front()) != "readfile") {
+        unsigned int firstOperationsNumberToExecute = commandOrder.front();
+        unsigned int lastOperationsNumberToExecute = commandOrder.back();
+        if (item == firstOperationsNumberToExecute) {
+            if (commandNamesByIdMap.at(firstOperationsNumberToExecute) != "readfile") {
                 throw std::runtime_error(
                         "RunParser error: The first command to execute should be 'readfile', but a different command was received.");
             }
-        } else if (item == commandOrder.back()) {
-            if (commandNamesByIdMap.at(commandOrder.back()) != "writefile") {
+        } else if (item == lastOperationsNumberToExecute) {
+            if (commandNamesByIdMap.at(lastOperationsNumberToExecute) != "writefile") {
                 throw std::runtime_error(
                         "RunParser error: The last command to execute should be 'writefile', but a different command was received.");
             }
@@ -154,4 +148,14 @@ void WorkFlow::WorkFlowParser::tryReadCurrentString(std::istringstream &stream, 
         throw std::runtime_error("RunParser error: The input string doesn't contain any data.");
     }
     stream >> string;
+}
+
+unsigned int WorkFlow::WorkFlowParser::findNextPositiveFreeCommandIndex(const unsigned int leftBorder) {
+    unsigned int number;
+    for (number = leftBorder; number < UINT_MAX; number++) {
+        if (std::find(commandOrder.begin(), commandOrder.end(), number) == commandOrder.end()) {
+            break;
+        }
+    }
+    return number;
 }

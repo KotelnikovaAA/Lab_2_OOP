@@ -5,14 +5,7 @@
 #include "Replace.h"
 #include <stdexcept>
 
-#include "../CommandCreator.h"
-
-REGISTER_CREATOR(Commands::Replace, "replace");
-
-static const unsigned int FIRST_REPLACE_ARGS_INDEX = 0;
-static const unsigned int SECOND_REPLACE_ARGS_INDEX = 1;
-
-void Commands::Replace::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) {
+void Commands::Replace::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, const unsigned int id) {
     std::string replacedWord = executionWorkFlowContext.getArgumentsById(id)[FIRST_REPLACE_ARGS_INDEX];
     std::string newWord = executionWorkFlowContext.getArgumentsById(id)[SECOND_REPLACE_ARGS_INDEX];
 

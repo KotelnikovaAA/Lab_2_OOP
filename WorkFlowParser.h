@@ -22,7 +22,7 @@ namespace WorkFlow {
         [[nodiscard]] std::vector<unsigned int> getCommandOrder() const;
 
         void
-        runParser(const bool isConsoleInputStream, const bool isConsoleOutputStream, const std::string &inputFileName,
+        runParser(bool isConsoleInputStream, bool isConsoleOutputStream, const std::string &inputFileName,
                   const std::string &outputFileName);
 
     private:
@@ -32,6 +32,8 @@ namespace WorkFlow {
         std::vector<unsigned int> commandOrder;
 
         static void tryReadCurrentString(std::istringstream &stream, std::string &string);
+
+        unsigned int findNextPositiveFreeCommandIndex(unsigned int leftBorder);
     };
 
 }

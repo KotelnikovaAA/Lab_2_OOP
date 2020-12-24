@@ -5,11 +5,6 @@
 #include "CommandsFactory.h"
 #include <string>
 
-WorkFlowFactory::CommandsFactory &WorkFlowFactory::CommandsFactory::instance() {
-    static CommandsFactory factory;
-    return factory;
-}
-
 void
 WorkFlowFactory::CommandsFactory::registerCommandCreator(const std::string &commandName,
                                                   WorkFlowFactory::ICommandCreator *commandCreator) {

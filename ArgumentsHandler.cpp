@@ -4,17 +4,10 @@
 
 #include "ArgumentsHandler.h"
 
-#define REQUIRED_NUMBER_OF_ARGS_WITHOUT_IN_AND_OUT_FILES 2
-#define REQUIRED_NUMBER_OF_ARGS_WITH_IN_OR_OUT_FILE 4
-#define REQUIRED_NUMBER_OF_ARGS_WITH_IN_AND_OUT_FILES 6
-
-#define IS_INPUT_RUN_KEY "-i"
-#define IS_OUTPUT_RUN_KEY "-o"
-
 void checkCorrectArgsCounter(unsigned int argumentsCount) {
-    if (argumentsCount != REQUIRED_NUMBER_OF_ARGS_WITHOUT_IN_AND_OUT_FILES &&
-        argumentsCount != REQUIRED_NUMBER_OF_ARGS_WITH_IN_OR_OUT_FILE &&
-        argumentsCount != REQUIRED_NUMBER_OF_ARGS_WITH_IN_AND_OUT_FILES) {
+    if (argumentsCount != static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITHOUT_IN_AND_OUT_FILES) &&
+        argumentsCount != static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_OR_OUT_FILE) &&
+        argumentsCount != static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_AND_OUT_FILES)) {
         throw std::runtime_error(
                 "ArgHandler error: The number of parameters passed is not what was expected. Check it and try again...");
     }
@@ -22,9 +15,9 @@ void checkCorrectArgsCounter(unsigned int argumentsCount) {
 
 void WorkFlow::ArgumentsHandler::checkArgumentValues() {
 
-    sourceFileName = argumentValues[1];
+    setSourceFileName();
 
-    if (argumentsCount == REQUIRED_NUMBER_OF_ARGS_WITH_IN_OR_OUT_FILE) {
+    if (argumentsCount == static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_OR_OUT_FILE)) {
         if (argumentValues[2] == IS_INPUT_RUN_KEY) {
             isConsoleInputStream = true;
             setInputFileName(argumentValues[3]);
@@ -36,7 +29,7 @@ void WorkFlow::ArgumentsHandler::checkArgumentValues() {
         }
     }
 
-    if (argumentsCount == REQUIRED_NUMBER_OF_ARGS_WITH_IN_AND_OUT_FILES) {
+    if (argumentsCount == static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_AND_OUT_FILES)) {
         if (argumentValues[2] == IS_INPUT_RUN_KEY && argumentValues[4] == IS_OUTPUT_RUN_KEY) {
             isConsoleInputStream = true;
             isConsoleOutputStream = true;
@@ -94,4 +87,8 @@ void WorkFlow::ArgumentsHandler::setInputFileName(const std::string &newInputFil
 
 void WorkFlow::ArgumentsHandler::setOutputFileName(const std::string &newOutputFileName) {
     outputFileName = newOutputFileName;
+}
+
+void WorkFlow::ArgumentsHandler::setSourceFileName() {
+    sourceFileName = argumentValues[1];
 }

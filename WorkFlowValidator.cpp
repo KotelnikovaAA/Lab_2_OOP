@@ -6,52 +6,23 @@
 #include <string>
 #include <map>
 
-#define READFILE_CODE 1
-#define WRITEFILE_CODE 2
-#define GREP_CODE 3
-#define SORT_CODE 4
-#define REPLACE_CODE 5
-#define DUMP_CODE 6
-
-#define READFILE_COUNT_ARGS 1
-#define WRITEFILE_COUNT_ARGS 1
-#define GREP_COUNT_ARGS 1
-#define SORT_COUNT_ARGS 0
-#define REPLACE_COUNT_ARGS 2
-#define DUMP_COUNT_ARGS 1
-
-
-static unsigned int getCommandCode(const std::string &commandName) {
-
-    std::map<std::string, unsigned int> commandNameCodeMap;
-
-    commandNameCodeMap["readfile"] = READFILE_CODE;
-    commandNameCodeMap["writefile"] = WRITEFILE_CODE;
-    commandNameCodeMap["grep"] = GREP_CODE;
-    commandNameCodeMap["sort"] = SORT_CODE;
-    commandNameCodeMap["replace"] = REPLACE_CODE;
-    commandNameCodeMap["dump"] = DUMP_CODE;
-
-    return commandNameCodeMap.at(commandName);
-}
-
 unsigned int WorkFlow::WorkFlowValidator::checkCommandName(const std::string &funcName) {
 
-    unsigned int commandCode = getCommandCode(funcName);
+    OperationsCode commandCode = getOperationCode(funcName);
 
     switch (commandCode) {
-        case READFILE_CODE:
-            return READFILE_COUNT_ARGS;
-        case WRITEFILE_CODE:
-            return WRITEFILE_COUNT_ARGS;
-        case GREP_CODE:
-            return GREP_COUNT_ARGS;
-        case SORT_CODE:
-            return SORT_COUNT_ARGS;
-        case REPLACE_CODE:
-            return REPLACE_COUNT_ARGS;
-        case DUMP_CODE:
-            return DUMP_COUNT_ARGS;
+        case OperationsCode::READFILE:
+            return static_cast<unsigned int>(OperationsCountArgs::READFILE);
+        case OperationsCode::WRITEFILE:
+            return static_cast<unsigned int>(OperationsCountArgs::WRITEFILE);
+        case OperationsCode::GREP:
+            return static_cast<unsigned int>(OperationsCountArgs::GREP);
+        case OperationsCode::SORT:
+            return static_cast<unsigned int>(OperationsCountArgs::SORT);
+        case OperationsCode::REPLACE:
+            return static_cast<unsigned int>(OperationsCountArgs::REPLACE);
+        case OperationsCode::DUMP:
+            return static_cast<unsigned int>(OperationsCountArgs::DUMP);
         default:
             throw std::runtime_error("Validator error: The source file contains unidentified command.");
     }
@@ -82,4 +53,17 @@ void WorkFlow::WorkFlowValidator::checkStringIsArrow(const std::string &verifiab
     if (verifiableStr != "->") {
         throw std::runtime_error("Validator error: One of the lines expected '->', but other data was found.");
     }
+}
+
+WorkFlow::OperationsCode WorkFlow::WorkFlowValidator::getOperationCode(const std::string &commandName) {
+    std::map<std::string, OperationsCode> commandNameCodeMap;
+
+    commandNameCodeMap["readfile"] = OperationsCode::READFILE;
+    commandNameCodeMap["writefile"] = OperationsCode::WRITEFILE;
+    commandNameCodeMap["grep"] = OperationsCode::GREP;
+    commandNameCodeMap["sort"] = OperationsCode::SORT;
+    commandNameCodeMap["replace"] = OperationsCode::REPLACE;
+    commandNameCodeMap["dump"] = OperationsCode::DUMP;
+
+    return commandNameCodeMap.at(commandName);
 }

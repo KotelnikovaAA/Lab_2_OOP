@@ -7,11 +7,7 @@
 #include <fstream>
 #include <string>
 
-#include "../CommandCreator.h"
-
-REGISTER_CREATOR(Commands::WriteFile, "writefile");
-
-void Commands::WriteFile::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) {
+void Commands::WriteFile::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, const unsigned int id) {
     std::ofstream outputFile;
     std::string fileName = executionWorkFlowContext.getArgumentsById(id).front();
     outputFile.open(fileName);

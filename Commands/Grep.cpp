@@ -5,11 +5,7 @@
 #include "Grep.h"
 #include <algorithm>
 
-#include "../CommandCreator.h"
-
-REGISTER_CREATOR(Commands::Grep, "grep");
-
-void Commands::Grep::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) {
+void Commands::Grep::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, const unsigned int id) {
 
     std::vector<std::string> vectorForGrep;
     std::string searchWord = executionWorkFlowContext.getArgumentsById(id).front();

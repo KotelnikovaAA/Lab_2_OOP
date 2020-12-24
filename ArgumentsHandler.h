@@ -11,6 +11,15 @@
 
 namespace WorkFlow {
 
+    enum class RequiredArgsNumber {
+        WITHOUT_IN_AND_OUT_FILES = 2,
+        WITH_IN_OR_OUT_FILE = 4,
+        WITH_IN_AND_OUT_FILES = 6
+    };
+
+    const std::string IS_INPUT_RUN_KEY = "-i";
+    const std::string IS_OUTPUT_RUN_KEY = "-o";
+
     class ArgumentsHandler {
 
     private:
@@ -28,6 +37,8 @@ namespace WorkFlow {
         std::string inputFileName;
 
         std::string outputFileName;
+
+        void setSourceFileName();
 
     public:
 

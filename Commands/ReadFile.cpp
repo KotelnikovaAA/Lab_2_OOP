@@ -6,10 +6,6 @@
 #include <fstream>
 #include <string>
 
-#include "../CommandCreator.h"
-
-REGISTER_CREATOR(Commands::ReadFile, "readfile");
-
 void Commands::ReadFile::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, const unsigned int id) {
     std::ifstream inputFile;
     std::string fileName = executionWorkFlowContext.getArgumentsById(id).front();
@@ -19,9 +15,9 @@ void Commands::ReadFile::execute(WorkFlow::ExecutionContext &executionWorkFlowCo
         throw std::runtime_error("ReadFile error: Couldn't open file... Program stopped.");
     }
 
-    std::string partOfText;
-    while (std::getline(inputFile, partOfText)) {
-        executionWorkFlowContext.addNewStringToText(partOfText);
+    std::string textPart;
+    while (std::getline(inputFile, textPart)) {
+        executionWorkFlowContext.addNewStringToText(textPart);
     }
 
     inputFile.close();

@@ -13,7 +13,6 @@ namespace Commands {
 
     class Dump : public WorkFlowFactory::ICommand {
         void execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) override;
-
     };
 
 }

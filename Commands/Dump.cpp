@@ -6,9 +6,7 @@
 #include <fstream>
 #include <string>
 
-REGISTER_CREATOR(Commands::Dump, "dump");
-
-void Commands::Dump::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, unsigned int id) {
+void Commands::Dump::execute(WorkFlow::ExecutionContext &executionWorkFlowContext, const unsigned int id) {
     std::ofstream outputFile;
     std::string fileName = executionWorkFlowContext.getArgumentsById(id).front();
 

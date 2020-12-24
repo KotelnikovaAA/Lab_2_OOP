@@ -9,8 +9,6 @@
 #include "ICommand.h"
 #include "CommandsFactory.h"
 
-#define REGISTER_CREATOR(T, NAME) static WorkFlowFactory::CommandCreator<T> creator(NAME);
-
 namespace WorkFlowFactory {
 
     template<class T>
@@ -20,8 +18,8 @@ namespace WorkFlowFactory {
             return new T();
         }
 
-        explicit CommandCreator(const std::string &commandName) {
-            WorkFlowFactory::CommandsFactory::instance().registerCommandCreator(commandName, this);
+        explicit CommandCreator(const std::string &commandName, WorkFlowFactory::CommandsFactory &executorFactory) {
+            executorFactory.registerCommandCreator(commandName, this);
         }
     };
 }
