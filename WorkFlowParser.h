@@ -34,6 +34,8 @@ namespace WorkFlow {
         static void tryReadCurrentString(std::istringstream &stream, std::string &string);
 
         unsigned int findNextPositiveFreeCommandIndex(unsigned int leftBorder);
+
+        void checkFirstLastCommandsToReadWriteFiles() const;
     };
 
 }

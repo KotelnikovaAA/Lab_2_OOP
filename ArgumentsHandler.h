@@ -24,6 +24,8 @@ namespace WorkFlow {
 
     private:
 
+        RequiredArgsNumber argumentsCounterStatus;
+
         unsigned int argumentsCount;
 
         std::vector<std::string> argumentValues;

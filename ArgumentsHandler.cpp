@@ -17,32 +17,51 @@ void WorkFlow::ArgumentsHandler::checkArgumentValues() {
 
     setSourceFileName();
 
-    if (argumentsCount == static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_OR_OUT_FILE)) {
-        if (argumentValues[2] == IS_INPUT_RUN_KEY) {
-            isConsoleInputStream = true;
-            setInputFileName(argumentValues[3]);
-        } else if (argumentValues[2] == IS_OUTPUT_RUN_KEY) {
-            isConsoleOutputStream = true;
-            setOutputFileName(argumentValues[3]);
-        } else {
-            throw std::runtime_error("ArgHandler error: The arguments string has invalid format.");
-        }
-    }
+    std::string commandWindowThirdInputString;
+    std::string commandWindowForthInputString;
+    std::string commandWindowFifthInputString;
+    std::string commandWindowSixthInputString;
 
-    if (argumentsCount == static_cast<unsigned int>(WorkFlow::RequiredArgsNumber::WITH_IN_AND_OUT_FILES)) {
-        if (argumentValues[2] == IS_INPUT_RUN_KEY && argumentValues[4] == IS_OUTPUT_RUN_KEY) {
-            isConsoleInputStream = true;
-            isConsoleOutputStream = true;
-            setInputFileName(argumentValues[3]);
-            setOutputFileName(argumentValues[5]);
-        } else if (argumentValues[2] == IS_OUTPUT_RUN_KEY && argumentValues[4] == IS_INPUT_RUN_KEY) {
-            isConsoleInputStream = true;
-            isConsoleOutputStream = true;
-            setInputFileName(argumentValues[5]);
-            setOutputFileName(argumentValues[3]);
-        } else {
-            throw std::runtime_error("ArgHandler error: The arguments string has invalid format.");
-        }
+
+
+    switch (argumentsCounterStatus) {
+        case RequiredArgsNumber::WITHOUT_IN_AND_OUT_FILES:
+            break;
+        case RequiredArgsNumber::WITH_IN_OR_OUT_FILE:
+            commandWindowThirdInputString = argumentValues[2];
+            commandWindowForthInputString = argumentValues[3];
+            if (commandWindowThirdInputString == IS_INPUT_RUN_KEY) {
+                isConsoleInputStream = true;
+                setInputFileName(commandWindowForthInputString);
+            } else if (commandWindowThirdInputString == IS_OUTPUT_RUN_KEY) {
+                isConsoleOutputStream = true;
+                setOutputFileName(commandWindowForthInputString);
+            } else {
+                throw std::runtime_error("ArgHandler error: The arguments string has invalid format.");
+            }
+            break;
+        case RequiredArgsNumber::WITH_IN_AND_OUT_FILES:
+            commandWindowThirdInputString = argumentValues[2];
+            commandWindowForthInputString = argumentValues[3];
+            commandWindowFifthInputString = argumentValues[4];
+            commandWindowSixthInputString = argumentValues[5];
+
+            if (commandWindowThirdInputString == IS_INPUT_RUN_KEY &&
+                commandWindowFifthInputString == IS_OUTPUT_RUN_KEY) {
+                isConsoleInputStream = true;
+                isConsoleOutputStream = true;
+                setInputFileName(commandWindowForthInputString);
+                setOutputFileName(commandWindowSixthInputString);
+            } else if (commandWindowThirdInputString == IS_OUTPUT_RUN_KEY &&
+                       commandWindowFifthInputString == IS_INPUT_RUN_KEY) {
+                isConsoleInputStream = true;
+                isConsoleOutputStream = true;
+                setInputFileName(commandWindowSixthInputString);
+                setOutputFileName(commandWindowForthInputString);
+            } else {
+                throw std::runtime_error("ArgHandler error: The arguments string has invalid format.");
+            }
+            break;
     }
 
 
@@ -50,6 +69,7 @@ void WorkFlow::ArgumentsHandler::checkArgumentValues() {
 
 void WorkFlow::ArgumentsHandler::setArgumentsCount(unsigned int newArgumentsCount) {
     checkCorrectArgsCounter(newArgumentsCount);
+    argumentsCounterStatus = static_cast<RequiredArgsNumber>(newArgumentsCount);
     argumentsCount = newArgumentsCount;
 }
 

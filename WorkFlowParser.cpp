@@ -98,28 +98,9 @@ void WorkFlow::WorkFlowParser::runParser(const bool isConsoleInputStream, const 
         argumentsByIdMap[outFileId].push_back(outputFileName);
     }
 
-    for (const auto &item : commandOrder) {
-        unsigned int firstOperationsNumberToExecute = commandOrder.front();
-        unsigned int lastOperationsNumberToExecute = commandOrder.back();
-        if (item == firstOperationsNumberToExecute) {
-            if (commandNamesByIdMap.at(firstOperationsNumberToExecute) != "readfile") {
-                throw std::runtime_error(
-                        "RunParser error: The first command to execute should be 'readfile', but a different command was received.");
-            }
-        } else if (item == lastOperationsNumberToExecute) {
-            if (commandNamesByIdMap.at(lastOperationsNumberToExecute) != "writefile") {
-                throw std::runtime_error(
-                        "RunParser error: The last command to execute should be 'writefile', but a different command was received.");
-            }
-        } else {
-            if (commandNamesByIdMap.at(item) == "readfile" || commandNamesByIdMap.at(item) == "writefile") {
-                throw std::runtime_error(
-                        "Run Parser error: The command order contains multiple 'readfile'/'writefile' commands.");
-            }
-        }
-    }
+    checkFirstLastCommandsToReadWriteFiles();
 
-    while (!sourceFile.eof()) {
+    if (!sourceFile.eof()) {
         throw std::runtime_error("RunParser error: The source file contains excess data.");
     }
 
@@ -158,4 +139,27 @@ unsigned int WorkFlow::WorkFlowParser::findNextPositiveFreeCommandIndex(const un
         }
     }
     return number;
+}
+
+void WorkFlow::WorkFlowParser::checkFirstLastCommandsToReadWriteFiles() const {
+    for (const auto &item : commandOrder) {
+        unsigned int firstOperationsNumberToExecute = commandOrder.front();
+        unsigned int lastOperationsNumberToExecute = commandOrder.back();
+        if (item == firstOperationsNumberToExecute) {
+            if (commandNamesByIdMap.at(firstOperationsNumberToExecute) != "readfile") {
+                throw std::runtime_error(
+                        "RunParser error: The first command to execute should be 'readfile', but a different command was received.");
+            }
+        } else if (item == lastOperationsNumberToExecute) {
+            if (commandNamesByIdMap.at(lastOperationsNumberToExecute) != "writefile") {
+                throw std::runtime_error(
+                        "RunParser error: The last command to execute should be 'writefile', but a different command was received.");
+            }
+        } else {
+            if (commandNamesByIdMap.at(item) == "readfile" || commandNamesByIdMap.at(item) == "writefile") {
+                throw std::runtime_error(
+                        "Run Parser error: The command order contains multiple 'readfile'/'writefile' commands.");
+            }
+        }
+    }
 }
